@@ -19,9 +19,9 @@ public enum VectorOutputMode: String, CaseIterable, Identifiable, Codable, Senda
     public var subtitle: String {
         switch self {
         case .illustration:
-            return L("Épaisseur variable · Pleins & déliés", "Variable width · Tapered strokes")
+            return L("Pleins & déliés", "Variable width")
         case .axidraw:
-            return L("Épaisseur fixe par stylo · 2-opt", "Fixed pen width · 2-opt toolpath")
+            return L("Stylos & 2-opt", "Pen layers & 2-opt")
         }
     }
 
@@ -162,17 +162,17 @@ public enum PaperFormat: String, CaseIterable, Identifiable, Codable, Sendable {
         case .a3: return "A3 (297 × 420 mm)"
         case .a5: return "A5 (148 × 210 mm)"
         case .a6: return "A6 (105 × 148 mm)"
-        case .original: return L("Pixels d'origine (1 px = 0,265 mm)", "Original pixels (1 px = 0.265 mm)")
+        case .original: return L("Pixels d'origine", "Original pixels")
         }
     }
 
     public var shortLabel: String {
         switch self {
-        case .a4: return "A4 · 210×297 mm"
-        case .a3: return "A3 · 297×420 mm"
-        case .a5: return "A5 · 148×210 mm"
-        case .a6: return "A6 · 105×148 mm"
-        case .original: return L("Pixels bruts", "Raw pixels")
+        case .a4: return "A4"
+        case .a3: return "A3"
+        case .a5: return "A5"
+        case .a6: return "A6"
+        case .original: return L("Pixels", "Pixels")
         }
     }
 

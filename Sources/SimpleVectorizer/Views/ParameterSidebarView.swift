@@ -2,11 +2,14 @@ import SimpleVectorizerCore
 import SwiftUI
 
 struct ParameterSidebarView: View {
+    static let sidebarWidth: CGFloat = 324
+    private static let innerWidth: CGFloat = sidebarWidth - 28
+
     @Bindable var model: AppModel
 
     var body: some View {
         @Bindable var vec = model.vectorizer
-        ScrollView {
+        ScrollView(.vertical, showsIndicators: true) {
             VStack(alignment: .leading, spacing: 18) {
                 outputModeSection(vec: vec)
                 algorithmSection(vec: vec)
@@ -16,9 +19,15 @@ struct ParameterSidebarView: View {
                 pensAndAxiDrawSection(vec: vec)
                 metricsCard(vec: vec)
             }
-            .padding(14)
+            .frame(width: Self.innerWidth, alignment: .leading)
+            .clipped()
+            .padding(.horizontal, 14)
+            .padding(.vertical, 14)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(width: Self.sidebarWidth)
         .background(Theme.panel.swiftUI)
+        .clipped()
     }
 
     // MARK: - 0. Output Mode (Illustration Variable-Width vs AxiDraw Uniform Plotter)
@@ -64,14 +73,16 @@ struct ParameterSidebarView: View {
                         .font(.system(size: 11.5, weight: active ? .semibold : .medium))
                         .foregroundStyle(active ? Theme.text.swiftUI : Theme.textDim.swiftUI)
                         .lineLimit(1)
+                        .minimumScaleFactor(0.85)
                 }
                 Text(mode.subtitle)
                     .font(.system(size: 9.5))
                     .foregroundStyle(active ? Theme.textDim.swiftUI : Theme.textFaint.swiftUI)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.85)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 9)
+            .padding(.horizontal, 8)
             .padding(.vertical, 7)
             .background(
                 RoundedRectangle(cornerRadius: 6)
@@ -199,7 +210,7 @@ struct ParameterSidebarView: View {
         VStack(alignment: .leading, spacing: 8) {
             SectionHeader(L("Prétraitement", "Preprocessing"))
 
-            HStack(spacing: 12) {
+            HStack(spacing: 10) {
                 Toggle(
                     L("Seuil adaptatif", "Adaptive threshold"),
                     isOn: Binding(
@@ -211,8 +222,10 @@ struct ParameterSidebarView: View {
                         }
                     )
                 )
+                .controlSize(.small)
                 .font(.system(size: 11))
                 .foregroundStyle(Theme.text.swiftUI)
+                .lineLimit(1)
 
                 Toggle(
                     L("Inverser", "Invert"),
@@ -225,8 +238,12 @@ struct ParameterSidebarView: View {
                         }
                     )
                 )
+                .controlSize(.small)
                 .font(.system(size: 11))
                 .foregroundStyle(Theme.text.swiftUI)
+                .lineLimit(1)
+
+                Spacer(minLength: 0)
             }
 
             SliderRow(
@@ -293,7 +310,7 @@ struct ParameterSidebarView: View {
         VStack(alignment: .leading, spacing: 8) {
             SectionHeader(L("Vectorisation & Courbes", "Vectorization & Curves"))
 
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 Toggle(
                     L("Sub-pixel Steger", "Steger sub-pixel"),
                     isOn: Binding(
@@ -305,8 +322,10 @@ struct ParameterSidebarView: View {
                         }
                     )
                 )
+                .controlSize(.small)
                 .font(.system(size: 11))
                 .foregroundStyle(Theme.text.swiftUI)
+                .lineLimit(1)
                 .help(L("Affinement sub-pixel par développement de Taylor du Hessien", "Sub-pixel refinement via 2nd-order Hessian Taylor expansion"))
 
                 Toggle(
@@ -320,9 +339,13 @@ struct ParameterSidebarView: View {
                         }
                     )
                 )
+                .controlSize(.small)
                 .font(.system(size: 11))
                 .foregroundStyle(Theme.text.swiftUI)
+                .lineLimit(1)
                 .help(L("Traverse les intersections X et T sans casser le trait", "Crosses X and T junctions without breaking the stroke"))
+
+                Spacer(minLength: 0)
             }
 
             SliderRow(
@@ -486,13 +509,15 @@ struct ParameterSidebarView: View {
     @ViewBuilder
     private func pensAndAxiDrawSection(vec: VectorizerController) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 Toggle(
-                    L("Aperçu noir sur blanc", "Black on white preview"),
+                    L("Noir sur blanc", "Black on white"),
                     isOn: $model.blackOnWhitePreview
                 )
+                .controlSize(.small)
                 .font(.system(size: 11))
                 .foregroundStyle(Theme.text.swiftUI)
+                .lineLimit(1)
                 .help(L("Afficher les vecteurs en traits noirs sur papier blanc (B / ⌘B)", "Render vectors as black strokes on white paper (B / ⌘B)"))
 
                 Toggle(
@@ -506,8 +531,12 @@ struct ParameterSidebarView: View {
                         }
                     )
                 )
+                .controlSize(.small)
                 .font(.system(size: 11))
                 .foregroundStyle(Theme.text.swiftUI)
+                .lineLimit(1)
+
+                Spacer(minLength: 0)
             }
 
             Button {
@@ -520,14 +549,16 @@ struct ParameterSidebarView: View {
                         .font(.system(size: 9.5, weight: .bold))
                         .foregroundStyle(Theme.accent.swiftUI)
                         .frame(width: 10)
-                    Text(L("TRACEUR AXIDRAW & MULTI-STYLOS", "AXIDRAW PLOTTER & MULTI-PEN"))
+                    Text(L("TRACEUR AXIDRAW & STYLOS", "AXIDRAW PLOTTER & PENS"))
                         .font(.system(size: 10, weight: .semibold))
-                        .kerning(0.7)
+                        .kerning(0.6)
                         .foregroundStyle(Theme.textFaint.swiftUI)
-                    Spacer()
+                        .lineLimit(1)
+                    Spacer(minLength: 4)
                     Text("\(vec.params.penCount) stylo\(vec.params.penCount > 1 ? "s" : "") · \(vec.params.paperFormat.shortLabel)")
                         .font(.system(size: 9.5, weight: .medium, design: .monospaced))
                         .foregroundStyle(Theme.textDim.swiftUI)
+                        .lineLimit(1)
                 }
                 .padding(.vertical, 4)
                 .padding(.horizontal, 6)
@@ -565,7 +596,7 @@ struct ParameterSidebarView: View {
                         }
                     }
 
-                    FieldRow(L("Format papier", "Paper size"), width: 92) {
+                    FieldRow(L("Format papier", "Paper size"), width: 88) {
                         Picker(
                             "",
                             selection: Binding(
@@ -582,9 +613,11 @@ struct ParameterSidebarView: View {
                             }
                         }
                         .labelsHidden()
+                        .controlSize(.small)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
-                    FieldRow(L("Orientation", "Orientation"), width: 92) {
+                    FieldRow(L("Orientation", "Orientation"), width: 88) {
                         Picker(
                             "",
                             selection: Binding(
@@ -601,6 +634,8 @@ struct ParameterSidebarView: View {
                             }
                         }
                         .labelsHidden()
+                        .controlSize(.small)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
                     if vec.params.paperFormat != .original {
@@ -632,8 +667,10 @@ struct ParameterSidebarView: View {
                             }
                         )
                     )
+                    .controlSize(.small)
                     .font(.system(size: 11))
                     .foregroundStyle(Theme.text.swiftUI)
+                    .lineLimit(1)
 
                     Divider().padding(.vertical, 2)
 
@@ -658,7 +695,8 @@ struct ParameterSidebarView: View {
                     .font(.system(size: 10, weight: .semibold))
                     .kerning(0.6)
                     .foregroundStyle(Theme.textFaint.swiftUI)
-                Spacer()
+                    .lineLimit(1)
+                Spacer(minLength: 4)
                 IconButton(
                     symbol: "arrow.clockwise",
                     helpText: L("Actualiser les ports USB (/dev/cu.usbmodem*)", "Refresh USB serial ports (/dev/cu.usbmodem*)")
@@ -667,22 +705,26 @@ struct ParameterSidebarView: View {
                 }
             }
 
-            FieldRow(L("Port USB", "USB Port"), width: 82) {
+            FieldRow(L("Port USB", "USB Port"), width: 76) {
                 Picker("", selection: $plotter.selectedPortPath) {
                     ForEach(plotter.availablePorts) { port in
                         Text(port.displayName).tag(port.path)
                     }
                 }
                 .labelsHidden()
+                .controlSize(.small)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            FieldRow(L("Modèle", "Machine"), width: 82) {
+            FieldRow(L("Modèle", "Machine"), width: 76) {
                 Picker("", selection: $plotter.config.machineModel) {
                     ForEach(AxiDrawMachineModel.allCases) { m in
                         Text(m.shortLabel).tag(m)
                     }
                 }
                 .labelsHidden()
+                .controlSize(.small)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             // Manual Jog & Setup Toolbar
@@ -775,8 +817,10 @@ struct ParameterSidebarView: View {
                     L("Pause en (0, 0) entre chaque stylo", "Pause at (0, 0) between pen layers"),
                     isOn: $plotter.config.pauseBetweenPenLayers
                 )
+                .controlSize(.small)
                 .font(.system(size: 11))
                 .foregroundStyle(Theme.text.swiftUI)
+                .lineLimit(1)
             }
 
             // Live Carriage Position & Status Footer
@@ -788,67 +832,79 @@ struct ParameterSidebarView: View {
                     .font(.system(size: 10, design: .monospaced).monospacedDigit())
                     .foregroundStyle(Theme.textDim.swiftUI)
                     .lineLimit(1)
+                    .truncationMode(.tail)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(RoundedRectangle(cornerRadius: 7).fill(Theme.lane.swiftUI.opacity(0.85)))
         .overlay(RoundedRectangle(cornerRadius: 7).strokeBorder(Theme.accent.swiftUI.opacity(0.28), lineWidth: 1))
     }
 
     @ViewBuilder
     private func axiDrawJogToolbar(vec: VectorizerController, plotter: AxiDrawPlotterController) -> some View {
-        HStack(spacing: 4) {
-            TextButton(
-                title: L("Haut", "Up"),
-                symbol: "arrow.up.to.line",
-                compact: true,
-                disabled: plotter.runState.isBusy
-            ) {
-                plotter.raisePen()
-            }
-            .help(L("Lever le stylo (SP,1) pour tester la hauteur haute", "Raise pen (SP,1) to test pen-up height"))
-
-            TextButton(
-                title: L("Bas", "Down"),
-                symbol: "arrow.down.to.line",
-                compact: true,
-                disabled: plotter.runState.isBusy
-            ) {
-                plotter.lowerPen()
-            }
-            .help(L("Baisser le stylo (SP,0) pour régler le contact papier", "Lower pen (SP,0) to calibrate paper contact"))
-
-            TextButton(
-                title: L("Origine", "Home"),
-                symbol: "scope",
-                compact: true,
-                disabled: plotter.runState.isBusy
-            ) {
-                plotter.returnToHome()
-            }
-            .help(L("Revenir à l'origine (0, 0 mm) stylo levé", "Return carriage to home (0, 0 mm) with pen up"))
-
-            TextButton(
-                title: L("Libérer", "Unlock"),
-                symbol: "lock.open",
-                compact: true,
-                disabled: plotter.runState.isBusy
-            ) {
-                plotter.unlockMotorsAndZeroOrigin()
-            }
-            .help(L("Couper les moteurs (EM,0,0) pour placer la tête à la main au coin (0, 0)", "De-energize motors (EM,0,0) to move carriage by hand to (0, 0)"))
-
-            TextButton(
-                title: L("Cadrer", "Frame"),
-                symbol: "viewfinder",
-                compact: true,
-                disabled: plotter.runState.isBusy || vec.result == nil
-            ) {
-                if let res = vec.result {
-                    plotter.startBoundingBoxFrame(result: res)
+        VStack(spacing: 4) {
+            HStack(spacing: 4) {
+                TextButton(
+                    title: L("Haut", "Up"),
+                    symbol: "arrow.up.to.line",
+                    compact: true,
+                    flexibleWidth: true,
+                    disabled: plotter.runState.isBusy
+                ) {
+                    plotter.raisePen()
                 }
+                .help(L("Lever le stylo (SP,1) pour tester la hauteur haute", "Raise pen (SP,1) to test pen-up height"))
+
+                TextButton(
+                    title: L("Bas", "Down"),
+                    symbol: "arrow.down.to.line",
+                    compact: true,
+                    flexibleWidth: true,
+                    disabled: plotter.runState.isBusy
+                ) {
+                    plotter.lowerPen()
+                }
+                .help(L("Baisser le stylo (SP,0) pour régler le contact papier", "Lower pen (SP,0) to calibrate paper contact"))
+
+                TextButton(
+                    title: L("Origine", "Home"),
+                    symbol: "scope",
+                    compact: true,
+                    flexibleWidth: true,
+                    disabled: plotter.runState.isBusy
+                ) {
+                    plotter.returnToHome()
+                }
+                .help(L("Revenir à l'origine (0, 0 mm) stylo levé", "Return carriage to home (0, 0 mm) with pen up"))
             }
-            .help(L("Parcourir le cadre englobant du dessin (stylo levé) pour vérifier l'alignement papier", "Trace drawing bounding box (pen up) to check paper alignment"))
+
+            HStack(spacing: 4) {
+                TextButton(
+                    title: L("Libérer moteurs", "Unlock motors"),
+                    symbol: "lock.open",
+                    compact: true,
+                    flexibleWidth: true,
+                    disabled: plotter.runState.isBusy
+                ) {
+                    plotter.unlockMotorsAndZeroOrigin()
+                }
+                .help(L("Couper les moteurs (EM,0,0) pour placer la tête à la main au coin (0, 0)", "De-energize motors (EM,0,0) to move carriage by hand to (0, 0)"))
+
+                TextButton(
+                    title: L("Cadrer feuille", "Frame sheet"),
+                    symbol: "viewfinder",
+                    compact: true,
+                    flexibleWidth: true,
+                    disabled: plotter.runState.isBusy || vec.result == nil
+                ) {
+                    if let res = vec.result {
+                        plotter.startBoundingBoxFrame(result: res)
+                    }
+                }
+                .help(L("Parcourir le cadre englobant du dessin (stylo levé) pour vérifier l'alignement papier", "Trace drawing bounding box (pen up) to check paper alignment"))
+            }
         }
     }
 
@@ -860,30 +916,34 @@ struct ParameterSidebarView: View {
                     title: L("Pause", "Pause"),
                     symbol: "pause.fill",
                     prominent: true,
-                    compact: false
+                    compact: false,
+                    flexibleWidth: true
                 ) {
                     plotter.pausePlot()
                 }
                 TextButton(
                     title: L("Stop (ES)", "Stop (ES)"),
                     symbol: "stop.fill",
-                    compact: false
+                    compact: false,
+                    flexibleWidth: true
                 ) {
                     plotter.stopPlot()
                 }
             } else if plotter.runState.isPaused {
                 TextButton(
-                    title: L("Reprendre le tracé", "Resume Plot"),
+                    title: L("Reprendre", "Resume"),
                     symbol: "play.fill",
                     prominent: true,
-                    compact: false
+                    compact: false,
+                    flexibleWidth: true
                 ) {
                     plotter.resumePlot()
                 }
                 TextButton(
                     title: L("Annuler", "Abort"),
                     symbol: "xmark",
-                    compact: false
+                    compact: false,
+                    flexibleWidth: true
                 ) {
                     plotter.stopPlot()
                 }
@@ -895,13 +955,13 @@ struct ParameterSidebarView: View {
                     symbol: "play.fill",
                     prominent: true,
                     compact: false,
+                    flexibleWidth: true,
                     disabled: vec.result == nil
                 ) {
                     if let res = vec.result {
                         plotter.startPlot(result: res)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }

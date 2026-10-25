@@ -93,7 +93,7 @@ public struct AxiDrawPortDevice: Identifiable, Equatable, Hashable, Sendable {
     public static var simulator: AxiDrawPortDevice {
         AxiDrawPortDevice(
             path: simulatorPath,
-            displayName: L("Simulateur AxiDraw (Virtuel)", "AxiDraw Simulator (Virtual)"),
+            displayName: L("Simulateur (Virtuel)", "Simulator (Virtual)"),
             isSimulator: true
         )
     }

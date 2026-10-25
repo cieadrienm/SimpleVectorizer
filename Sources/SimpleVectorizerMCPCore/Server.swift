@@ -5,7 +5,7 @@ public final class SimpleVectorizerMCPServer {
     let apiBase: String
     let version: String
 
-    public init(transport: @escaping Transport, apiBase: String = "http://127.0.0.1:17940", version: String = "0.7.7") {
+    public init(transport: @escaping Transport, apiBase: String = "http://127.0.0.1:17940", version: String = "0.7.8") {
         self.transport = transport
         self.apiBase = apiBase
         self.version = version

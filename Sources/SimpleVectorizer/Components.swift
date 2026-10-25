@@ -31,24 +31,27 @@ struct SectionHeader: View {
 
 struct FieldRow<Content: View>: View {
     let label: String
-    var width: CGFloat = 96
+    var width: CGFloat = 86
     let content: Content
 
-    init(_ label: String, width: CGFloat = 96, @ViewBuilder content: () -> Content) {
+    init(_ label: String, width: CGFloat = 86, @ViewBuilder content: () -> Content) {
         self.label = label
         self.width = width
         self.content = content()
     }
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
+        HStack(alignment: .center, spacing: 6) {
             Text(label)
-                .font(.system(size: 11.5))
+                .font(.system(size: 11))
                 .foregroundStyle(Theme.textDim.swiftUI)
+                .lineLimit(1)
                 .frame(width: width, alignment: .leading)
             content
-            Spacer(minLength: 0)
+                .controlSize(.small)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -62,14 +65,18 @@ struct SliderRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            HStack {
+            HStack(spacing: 4) {
                 Text(label)
                     .font(.system(size: 11))
                     .foregroundStyle(Theme.textDim.swiftUI)
-                Spacer()
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                Spacer(minLength: 4)
                 Text(valueText)
                     .font(.system(size: 11, weight: .medium, design: .monospaced).monospacedDigit())
                     .foregroundStyle(tint)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
             }
             if let step {
                 Slider(value: $value, in: range, step: step)
@@ -81,6 +88,7 @@ struct SliderRow: View {
                     .controlSize(.small)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -172,6 +180,7 @@ struct TextButton: View {
     var destructive: Bool = false
     var tint: Color? = nil
     var compact: Bool = false
+    var flexibleWidth: Bool = false
     var disabled: Bool = false
     let action: () -> Void
 
@@ -180,21 +189,22 @@ struct TextButton: View {
     var body: some View {
         let activeColor = tint ?? (destructive ? Theme.danger.swiftUI : Theme.accent.swiftUI)
         Button(action: action) {
-            HStack(spacing: 5) {
+            HStack(spacing: 4) {
                 if let symbol {
                     Image(systemName: symbol)
-                        .font(.system(size: compact ? 10.5 : 11, weight: .semibold))
+                        .font(.system(size: compact ? 10 : 11, weight: .semibold))
                 }
                 Text(title)
-                    .font(.system(size: compact ? 11 : 11.5, weight: prominent || destructive ? .semibold : .medium))
+                    .font(.system(size: compact ? 10.5 : 11.5, weight: prominent || destructive ? .semibold : .medium))
                     .lineLimit(1)
             }
-            .fixedSize(horizontal: true, vertical: false)
+            .frame(maxWidth: flexibleWidth ? .infinity : nil)
+            .fixedSize(horizontal: !flexibleWidth, vertical: false)
             .foregroundStyle(
                 disabled ? Theme.textFaint.swiftUI
                     : (prominent || destructive ? Theme.background.swiftUI : (tint ?? Theme.text.swiftUI))
             )
-            .padding(.horizontal, compact ? 8 : 11)
+            .padding(.horizontal, compact ? 7 : 11)
             .padding(.vertical, compact ? 4 : 5)
             .background(
                 RoundedRectangle(cornerRadius: 5)

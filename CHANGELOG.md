@@ -3,6 +3,12 @@
 La version de SimpleVectorizer vit à un seul endroit : `VERSION` dans `Scripts/bundle.sh` (G110).
 Correctif : `x.y.Z` ; fonction : `x.Y.0` ; rupture : `X.0.0`.
 
+## 0.7.8 — 2026-10-25
+
+- Correction de l'élargissement et du rognage horizontal de la colonne latérale en mode **Traceur AxiDraw** (`ParameterSidebarView`, `Components`, `TopBarAndStatusBar`) :
+  - Verrouillage strict de la largeur interne du contenu du `ScrollView` (`ParameterSidebarView.innerWidth = 296 pt`, `sidebarWidth = 324 pt`) pour empêcher `NSScrollView` de redimensionner et centrer son document au-delà de la colonne lorsque la vectorisation asynchrone se termine.
+  - Répartition de la barre d'outils manuelle AxiDraw (`axiDrawJogToolbar`) sur 2 lignes de boutons flexibles (`TextButton(flexibleWidth: true)`) et contraintes de largeur sur les `Picker`, `FieldRow`, `SliderRow` et `StatusBar`.
+
 ## 0.7.7 — 2026-10-25
 
 - **Pilotage direct du traceur AxiDraw en USB (protocole série EiBotBoard / EBB)** (`AxiDrawHardware`, `AxiDrawPlotterController`) sans aucune dépendance externe :

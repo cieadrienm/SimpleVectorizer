@@ -87,9 +87,11 @@ enum SelfTest {
             check(countAfterUndo == countBefore, "Undo restores deleted stroke (\(countAfterUndo))")
         }
 
-        // 7. Test offscreen PNG snapshot rendering
+        // 7. Test offscreen PNG snapshot rendering (both Illustration and AxiDraw modes)
         let pngSplit = Snapshot.renderOffscreenPNG(model: model)
         check((pngSplit?.count ?? 0) > 15_000, "Offscreen split PNG snapshot renders (> 15 KB)")
+        model.setOutputMode(.axidraw)
+        model.vectorizer.runSynchronousVectorization()
         model.viewMode = .vectorOnly
         let pngSheet = Snapshot.renderOffscreenPNG(model: model)
         check((pngSheet?.count ?? 0) > 15_000, "Offscreen AxiDraw sheet PNG snapshot renders (> 15 KB)")

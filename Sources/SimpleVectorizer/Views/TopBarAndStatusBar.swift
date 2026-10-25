@@ -6,7 +6,7 @@ struct TopBar: View {
 
     var body: some View {
         @Bindable var vec = model.vectorizer
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             IconButton(
                 symbol: "sidebar.left",
                 helpText: L("Afficher ou masquer les paramètres (⌥⌘S)", "Show or hide parameters (⌥⌘S)"),
@@ -72,7 +72,7 @@ struct TopBar: View {
                                 .lineLimit(1)
                         }
                         .foregroundStyle(active ? Theme.background.swiftUI : Theme.textDim.swiftUI)
-                        .padding(.horizontal, 7)
+                        .padding(.horizontal, 6)
                         .padding(.vertical, 4)
                         .background(
                             RoundedRectangle(cornerRadius: 5)
@@ -85,21 +85,21 @@ struct TopBar: View {
             }
 
             if model.viewMode == .overlay {
-                HStack(spacing: 6) {
+                HStack(spacing: 5) {
                     Text(L("Img", "Bmp"))
                         .font(.system(size: 10, design: .monospaced))
                         .foregroundStyle(Theme.textDim.swiftUI)
                     Slider(value: $model.bitmapOpacity, in: 0...1)
                         .tint(Theme.textDim.swiftUI)
                         .controlSize(.mini)
-                        .frame(width: 56)
+                        .frame(width: 48)
                     Text(L("Vec", "Vec"))
                         .font(.system(size: 10, design: .monospaced))
                         .foregroundStyle(Theme.accent.swiftUI)
                     Slider(value: $model.vectorOpacity, in: 0...1)
                         .tint(Theme.accent.swiftUI)
                         .controlSize(.mini)
-                        .frame(width: 56)
+                        .frame(width: 48)
                 }
             }
 
@@ -120,7 +120,7 @@ struct TopBar: View {
                                 .lineLimit(1)
                         }
                         .foregroundStyle(active ? Theme.tcp.swiftUI : Theme.textDim.swiftUI)
-                        .padding(.horizontal, 7)
+                        .padding(.horizontal, 6)
                         .padding(.vertical, 4)
                         .background(
                             RoundedRectangle(cornerRadius: 5)
@@ -185,15 +185,12 @@ struct TopBar: View {
                 }
             }
 
-            Spacer(minLength: 6)
+            Spacer(minLength: 4)
 
             outputModeQuickButton(vec: vec)
 
-            // Algorithm & Paper badges
+            // Algorithm badge
             Chip(text: vec.params.algorithm.shortBadge, tint: Theme.alive.swiftUI)
-            if model.showAxiDrawSection {
-                Chip(text: vec.params.paperFormat.shortLabel, tint: Theme.tcp.swiftUI)
-            }
 
             Divider().frame(height: 16)
 
@@ -222,7 +219,7 @@ struct TopBar: View {
             }
             .help(L("Enregistrer le fichier SVG (⌘S / ⌘E)", "Save SVG file (⌘S / ⌘E)"))
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 10)
         .frame(height: 40)
         .background(Theme.header.swiftUI)
     }
@@ -232,7 +229,7 @@ struct TopBar: View {
         let plotter = model.plotter
         if plotter.runState.isBusy {
             TextButton(
-                title: L("Pause AxiDraw", "Pause AxiDraw"),
+                title: L("Pause", "Pause"),
                 symbol: "pause.fill",
                 compact: true
             ) {
@@ -249,7 +246,7 @@ struct TopBar: View {
             }
         } else {
             TextButton(
-                title: L("Tracer AxiDraw", "Plot AxiDraw"),
+                title: L("Tracer", "Plot"),
                 symbol: "play.fill",
                 compact: true,
                 disabled: vec.result == nil
@@ -265,7 +262,9 @@ struct TopBar: View {
     @ViewBuilder
     private func outputModeQuickButton(vec: VectorizerController) -> some View {
         let isIllus = (vec.params.outputMode == .illustration)
-        let badgeText = isIllus ? vec.params.illustrationStrokeStyle.shortBadge : L("AxiDraw", "AxiDraw")
+        let badgeText = isIllus
+            ? vec.params.illustrationStrokeStyle.shortBadge
+            : "AxiDraw · \(vec.params.paperFormat.shortLabel)"
         let badgeTint = isIllus ? Theme.tcp.swiftUI : Theme.accent.swiftUI
         Button {
             let next: VectorOutputMode = isIllus ? .axidraw : .illustration
@@ -284,6 +283,7 @@ struct TopBar: View {
                 RoundedRectangle(cornerRadius: 4)
                     .fill(badgeTint.opacity(0.14))
             )
+            .fixedSize(horizontal: true, vertical: false)
         }
         .buttonStyle(.plain)
         .help(vec.params.outputMode.detail)
@@ -295,7 +295,7 @@ struct StatusBar: View {
 
     var body: some View {
         let vec = model.vectorizer
-        HStack(spacing: 14) {
+        HStack(spacing: 12) {
             HStack(spacing: 6) {
                 if vec.isProcessing {
                     ProgressView().controlSize(.mini).scaleEffect(0.7).frame(width: 10, height: 10)
@@ -308,9 +308,10 @@ struct StatusBar: View {
                     .font(.system(size: 11).monospacedDigit())
                     .foregroundStyle(vec.lastError != nil ? Theme.danger.swiftUI : Theme.textDim.swiftUI)
                     .lineLimit(1)
+                    .truncationMode(.middle)
             }
-
-            Spacer()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .layoutPriority(-1)
 
             if let m = vec.result?.metrics {
                 Text(
@@ -321,6 +322,8 @@ struct StatusBar: View {
                 )
                 .font(.system(size: 10.5, design: .monospaced).monospacedDigit())
                 .foregroundStyle(Theme.textFaint.swiftUI)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
             }
 
             Divider().frame(height: 12)
@@ -366,6 +369,7 @@ struct StatusBar: View {
             }
             .font(.system(size: 10.5, design: .monospaced))
             .foregroundStyle(Theme.textFaint.swiftUI)
+            .fixedSize(horizontal: true, vertical: false)
         }
         .padding(.horizontal, 12)
         .frame(height: 24)

@@ -17,7 +17,7 @@ struct ContentView: View {
             HStack(spacing: 0) {
                 if model.showSidebar {
                     ParameterSidebarView(model: model)
-                        .frame(width: 316)
+                        .frame(width: ParameterSidebarView.sidebarWidth)
                     Rectangle().fill(Theme.separator.swiftUI).frame(width: 1)
                 }
 
