@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VECTORISEUR PRO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a1e;
+            color: #e0e0e0;
+            font-family: 'DM Sans', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            gap: 0;
+        }
+
+        .control-panel {
+            width: 320px;
+            background: #1a1a1e;
+            border-right: 1px solid #3a3a3f;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .header {
+            margin-bottom: 32px;
+            border-bottom: 2px solid #3a3a3f;
+            padding-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: #888;
+            letter-spacing: 0.02em;
+        }
+
+        .upload-area {
+            background: #252529;
+            border: 2px dashed #3a3a3f;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #00d4ff;
+            background: #2a2a30;
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        .upload-label {
+            cursor: pointer;
+            display: block;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .upload-label strong {
+            color: #00d4ff;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #3a3a3f;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '──';
+            color: #3a3a3f;
+        }
+
+        .control-row {
+            margin-bottom: 12px;
+        }
+
+        .control-label {
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .control-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #00d4ff;
+            font-weight: 500;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #3a3a3f;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #00d4ff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            width: 16px;
+            height: 16px;
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #00d4ff;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            width: 16px;
+            height: 16px;
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+        }
+
+        input[type="range"]::-moz-range-track {
+            background: transparent;
+            border: none;
+        }
+
+        select {
+            background: #252529;
+            border: 1px solid #3a3a3f;
+            color: #e0e0e0;
+            border-radius: 4px;
+            padding: 8px;
+            width: 100%;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        select:hover, select:focus {
+            border-color: #00d4ff;
+            outline: none;
+        }
+
+        select:focus {
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.2);
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            flex: 1;
+        }
+
+        input[type="checkbox"] {
+            accent-color: #00d4ff;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            background: #252529;
+            border: 1px solid #3a3a3f;
+            color: #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        button:active {
+            background: #2a2a30;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pen-config {
+            background: #252529;
+            border: 1px solid #3a3a3f;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .pen-config-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+
+        .pen-color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid #3a3a3f;
+        }
+
+        .pen-config-label {
+            flex: 1;
+            color: #aaa;
+        }
+
+        .pen-config-width {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #00d4ff;
+        }
+
+        .stats {
+            background: #252529;
+            border: 1px solid #3a3a3f;
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 11px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #3a3a3f;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .stat-label {
+            color: #888;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            color: #00d4ff;
+            font-weight: 500;
+        }
+
+        .progress-section {
+            margin-bottom: 24px;
+        }
+
+        .progress-title {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #3a3a3f;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #FF0080);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #888;
+            gap: 4px;
+        }
+
+        .progress-stage {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .progress-percent {
+            font-family: 'JetBrains Mono', monospace;
+            color: #00d4ff;
+            min-width: 35px;
+            text-align: right;
+        }
+
+        .progress-time {
+            font-family: 'JetBrains Mono', monospace;
+            color: #00d4ff;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .progress-hidden {
+            display: none;
+        }
+
+        .canvas-area {
+            flex: 1;
+            display: flex;
+            background: #1a1a1e;
+            gap: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .canvas-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #3a3a3f;
+            padding: 16px;
+        }
+
+        .canvas-pane:last-child {
+            border-right: none;
+        }
+
+        .canvas-title {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .canvas-display {
+            flex: 1;
+            background: #252529;
+            border: 1px solid #3a3a3f;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            cursor: grab;
+        }
+
+        .canvas-display:active {
+            cursor: grabbing;
+        }
+
+        .canvas-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: 0 0;
+        }
+
+        .canvas-display img,
+        .canvas-display canvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .canvas-display svg {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+
+        .zoom-info {
+            position: absolute;
+            bottom: 6px;
+            right: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #555;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .canvas-placeholder {
+            color: #555;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .processing-toast {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            background: #252529ee;
+            border: 1px solid #3a3a3f;
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            pointer-events: none;
+            max-width: 320px;
+        }
+
+        .processing-toast.active {
+            display: flex;
+        }
+
+        .processing-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #3a3a3f;
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .processing-text {
+            font-size: 11px;
+            color: #aaa;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .processing-percent {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #00d4ff;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .control-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .control-panel::-webkit-scrollbar-track {
+            background: #1a1a1e;
+        }
+
+        .control-panel::-webkit-scrollbar-thumb {
+            background: #3a3a3f;
+            border-radius: 3px;
+        }
+
+        .control-panel::-webkit-scrollbar-thumb:hover {
+            background: #4a4a4f;
+        }
+
+        .canvas-display::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .canvas-display::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .canvas-display::-webkit-scrollbar-thumb {
+            background: #3a3a3f;
+            border-radius: 3px;
+        }
+
+        .canvas-display::-webkit-scrollbar-thumb:hover {
+            background: #4a4a4f;
+        }
+
+        /* ── View mode toolbar ── */
+        .view-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 16px;
+            background: #1a1a1e;
+            border-bottom: 1px solid #3a3a3f;
+            min-height: 36px;
+        }
+
+        .view-mode-btn {
+            flex: none;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            background: #252529;
+            border: 1px solid #3a3a3f;
+            color: #888;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.03em;
+        }
+
+        .view-mode-btn:hover {
+            border-color: #00d4ff;
+            color: #ccc;
+        }
+
+        .view-mode-btn.active {
+            border-color: #00d4ff;
+            color: #00d4ff;
+            background: #00d4ff12;
+        }
+
+        .opacity-controls {
+            display: none;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .opacity-controls.visible {
+            display: flex;
+        }
+
+        .opacity-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .opacity-label {
+            font-size: 10px;
+            color: #888;
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+            min-width: 50px;
+        }
+
+        .opacity-slider {
+            width: 100px;
+        }
+
+        .opacity-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #00d4ff;
+            min-width: 30px;
+            text-align: right;
+        }
+
+        /* ── Overlay mode ── */
+        .canvas-area.overlay-mode .canvas-pane:nth-child(2) {
+            display: none;
+        }
+
+        .canvas-area.overlay-mode .canvas-pane:first-child {
+            border-right: none;
+        }
+
+        .canvas-area.overlay-mode .canvas-pane:first-child .canvas-title {
+            display: none;
+        }
+
+        .overlay-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: center center;
+            pointer-events: none;
+        }
+
+        .overlay-layer img,
+        .overlay-layer svg {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="control-panel">
+            <div class="header">
+                <h1>VECTORISEUR PRO</h1>
+                <p>Bitmap → SVG pour traceurs</p>
+            </div>
+
+            <div class="upload-area" id="uploadArea">
+                <label class="upload-label">
+                    <strong>Cliquez</strong> ou glissez une image
+                </label>
+                <input type="file" id="fileInput" accept="image/*">
+            </div>
+
+            <div class="section">
+                <div class="section-title">Algorithme</div>
+                <div class="control-row">
+                    <select id="algorithmSelect">
+                        <option value="skeletonize">Squelettisation</option>
+                        <option value="canny">Contours (Canny)</option>
+                        <option value="combined">Combiné</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Prétraitement</div>
+
+                <div class="control-row">
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="adaptiveCheckbox" checked>
+                            Seuil adaptatif
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="invertCheckbox">
+                            Inverser
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label">
+                        <span>Seuil</span>
+                        <span class="control-value" id="thresholdValue">128</span>
+                    </div>
+                    <input type="range" id="thresholdSlider" min="0" max="255" value="128">
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label">
+                        <span>Flou gaussien</span>
+                        <span class="control-value" id="blurValue">0</span>
+                    </div>
+                    <input type="range" id="blurSlider" min="0" max="10" value="0" step="0.5">
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label">
+                        <span>Nettoyage</span>
+                        <span class="control-value" id="cleanupValue">0</span>
+                    </div>
+                    <input type="range" id="cleanupSlider" min="0" max="2" value="0" step="1">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Vectorisation</div>
+
+                <div class="control-row">
+                    <div class="control-label">
+                        <span>Tolérance RDP</span>
+                        <span class="control-value" id="rdpTolerance">1.0</span>
+                    </div>
+                    <input type="range" id="rdpSlider" min="0.1" max="5.0" value="1.0" step="0.1">
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label">
+                        <span>Lissage courbes</span>
+                        <span class="control-value" id="curveSmoothValue">0.5</span>
+                    </div>
+                    <input type="range" id="curveSmoothSlider" min="0" max="1" value="0.5" step="0.05">
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label">
+                        <span>Angle de coin</span>
+                        <span class="control-value" id="cornerAngleValue">45</span>
+                    </div>
+                    <input type="range" id="cornerAngleSlider" min="15" max="90" value="45" step="1">
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label">
+                        <span>Long. minimale</span>
+                        <span class="control-value" id="minLengthValue">3</span>
+                    </div>
+                    <input type="range" id="minLengthSlider" min="1" max="30" value="3" step="1">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Fusion</div>
+
+                <div class="control-row">
+                    <div class="control-label">
+                        <span>Gap max fusion</span>
+                        <span class="control-value" id="maxGapValue">8</span>
+                    </div>
+                    <input type="range" id="maxGapSlider" min="1" max="20" value="8" step="1">
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label">
+                        <span>Continuité</span>
+                        <span class="control-value" id="continuityValue">50</span>
+                    </div>
+                    <input type="range" id="continuitySlider" min="0" max="100" value="50" step="5">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Stylos</div>
+
+                <div class="control-row">
+                    <div class="control-label">
+                        <span>Nombre</span>
+                        <span class="control-value" id="penCountValue">2</span>
+                    </div>
+                    <input type="range" id="penCountSlider" min="2" max="4" value="2" step="1">
+                </div>
+
+                <div id="penConfigContainer"></div>
+            </div>
+
+            <div class="button-group">
+                <button id="exportBtn">Exporter SVG</button>
+                <button id="copyBtn">Copier SVG</button>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Statistiques</div>
+                <div class="stats">
+                    <div class="stat-row">
+                        <span class="stat-label">Image:</span>
+                        <span class="stat-value" id="imageStat">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Chemins:</span>
+                        <span class="stat-value" id="pathsStat">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Dist. dessin:</span>
+                        <span class="stat-value" id="drawDistStat">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Dist. voyage:</span>
+                        <span class="stat-value" id="travelDistStat">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Levées stylo:</span>
+                        <span class="stat-value" id="penUpsStat">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Temps estimé:</span>
+                        <span class="stat-value" id="estimatedTimeStat">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Temps calcul:</span>
+                        <span class="stat-value" id="computeTimeStat">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-section progress-hidden" id="progressSection">
+                <div class="progress-title">Progression</div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="progressBarFill"></div>
+                </div>
+                <div class="progress-info">
+                    <span class="progress-stage" id="progressStage">--</span>
+                    <span class="progress-percent" id="progressPercent">0%</span>
+                    <span class="progress-time" id="progressTime">--</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+            <div class="view-toolbar">
+                <button class="view-mode-btn active" id="btnSideBySide" title="Côte à côte">◫ Côte à côte</button>
+                <button class="view-mode-btn" id="btnOverlay" title="Superposition">◧ Superposition</button>
+
+                <div class="opacity-controls" id="opacityControls">
+                    <div class="opacity-group">
+                        <span class="opacity-label">Bitmap</span>
+                        <input type="range" class="opacity-slider" id="opacityBitmap" min="0" max="100" value="50">
+                        <span class="opacity-value" id="opacityBitmapVal">50%</span>
+                    </div>
+                    <div class="opacity-group">
+                        <span class="opacity-label">Vecteur</span>
+                        <input type="range" class="opacity-slider" id="opacityVector" min="0" max="100" value="100">
+                        <span class="opacity-value" id="opacityVectorVal">100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas-area" id="canvasArea">
+                <div class="canvas-pane">
+                    <div class="canvas-title">Original</div>
+                    <div class="canvas-display" id="originalCanvas">
+                        <div class="canvas-inner" id="originalInner">
+                            <div class="canvas-placeholder">Image en attente</div>
+                        </div>
+                        <!-- Overlay vector layer (hidden in side-by-side mode) -->
+                        <div class="overlay-layer" id="overlayVectorLayer" style="display:none;"></div>
+                        <div class="zoom-info" id="zoomInfo">100%</div>
+                    </div>
+                </div>
+                <div class="canvas-pane">
+                    <div class="canvas-title">Vectorisée</div>
+                    <div class="canvas-display" id="vectorizedCanvas">
+                        <div class="canvas-inner" id="vectorizedInner">
+                            <div class="canvas-placeholder">Résultat en attente</div>
+                        </div>
+                        <div class="zoom-info" id="zoomInfo2">100%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="processing-toast" id="processingToast">
+        <div class="processing-spinner"></div>
+        <div class="processing-text" id="processingText">Traitement...</div>
+        <div class="processing-percent" id="processingPercent">0%</div>
+    </div>
+
+    <script>
+        let imageData = null;
+        let currentSVG = null;
+        let currentController = null;
+        let debounceTimer = null;
+        let startTime = 0;
+        let imageHash = '';  // md5 computed server-side, echoed back
+        let pendingFromStage = 'full';  // 'full' or 'smooth'
+
+        const defaultPenColors = ['#FF0080', '#00d4ff', '#FFB800', '#80FF00'];
+
+        const params = {
+            algorithm: 'skeletonize',
+            threshold: 128,
+            blur: 0,
+            invert: false,
+            adaptive: true,
+            cleanup: 0,
+            rdpTolerance: 1.0,
+            curveSmooth: 0.5,
+            cornerAngle: 45,
+            minLength: 3,
+            maxGap: 8,
+            continuity: 50,
+            penCount: 2,
+            penWidths: [0.5, 1.0],
+            penColors: ['#FF0080', '#00d4ff']
+        };
+
+        // ── Synchronized zoom/pan state ──
+        let viewState = { scale: 1, panX: 0, panY: 0 };
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        let panStart = { x: 0, y: 0 };
+        let fitScale = 1; // scale to fit image in view
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const algorithmSelect = document.getElementById('algorithmSelect');
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        const blurSlider = document.getElementById('blurSlider');
+        const invertCheckbox = document.getElementById('invertCheckbox');
+        const rdpSlider = document.getElementById('rdpSlider');
+        const curveSmoothSlider = document.getElementById('curveSmoothSlider');
+        const cornerAngleSlider = document.getElementById('cornerAngleSlider');
+        const minLengthSlider = document.getElementById('minLengthSlider');
+        const maxGapSlider = document.getElementById('maxGapSlider');
+        const penCountSlider = document.getElementById('penCountSlider');
+        const penConfigContainer = document.getElementById('penConfigContainer');
+        const originalCanvasDiv = document.getElementById('originalCanvas');
+        const vectorizedCanvasDiv = document.getElementById('vectorizedCanvas');
+        const originalInner = document.getElementById('originalInner');
+        const vectorizedInner = document.getElementById('vectorizedInner');
+        const zoomInfo = document.getElementById('zoomInfo');
+        const zoomInfo2 = document.getElementById('zoomInfo2');
+        const exportBtn = document.getElementById('exportBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const progressSection = document.getElementById('progressSection');
+        const progressBarFill = document.getElementById('progressBarFill');
+        const progressStage = document.getElementById('progressStage');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressTime = document.getElementById('progressTime');
+        const processingToast = document.getElementById('processingToast');
+        const processingPercent = document.getElementById('processingPercent');
+        const processingText = document.getElementById('processingText');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFileSelect(e.dataTransfer.files);
+        });
+        fileInput.addEventListener('change', (e) => {
+            handleFileSelect(e.target.files);
+        });
+
+        algorithmSelect.addEventListener('change', (e) => {
+            params.algorithm = e.target.value;
+            triggerProcess();
+        });
+
+        thresholdSlider.addEventListener('input', (e) => {
+            params.threshold = parseInt(e.target.value);
+            document.getElementById('thresholdValue').textContent = params.threshold;
+            triggerProcess();
+        });
+
+        blurSlider.addEventListener('input', (e) => {
+            params.blur = parseFloat(e.target.value);
+            document.getElementById('blurValue').textContent = params.blur.toFixed(1);
+            triggerProcess();
+        });
+
+        invertCheckbox.addEventListener('change', (e) => {
+            params.invert = e.target.checked;
+            triggerProcess();
+        });
+
+        document.getElementById('adaptiveCheckbox').addEventListener('change', (e) => {
+            params.adaptive = e.target.checked;
+            triggerProcess();
+        });
+
+        document.getElementById('cleanupSlider').addEventListener('input', (e) => {
+            params.cleanup = parseInt(e.target.value);
+            const labels = ['Aucun', 'Doux', 'Fort'];
+            document.getElementById('cleanupValue').textContent = labels[params.cleanup];
+            triggerProcess();
+        });
+
+        rdpSlider.addEventListener('input', (e) => {
+            params.rdpTolerance = parseFloat(e.target.value);
+            document.getElementById('rdpTolerance').textContent = params.rdpTolerance.toFixed(1);
+            triggerProcess();
+        });
+
+        curveSmoothSlider.addEventListener('input', (e) => {
+            params.curveSmooth = parseFloat(e.target.value);
+            document.getElementById('curveSmoothValue').textContent = params.curveSmooth.toFixed(2);
+            triggerProcess('smooth');
+        });
+
+        cornerAngleSlider.addEventListener('input', (e) => {
+            params.cornerAngle = parseInt(e.target.value);
+            document.getElementById('cornerAngleValue').textContent = params.cornerAngle;
+            triggerProcess('smooth');
+        });
+
+        minLengthSlider.addEventListener('input', (e) => {
+            params.minLength = parseInt(e.target.value);
+            document.getElementById('minLengthValue').textContent = params.minLength;
+            triggerProcess();
+        });
+
+        maxGapSlider.addEventListener('input', (e) => {
+            params.maxGap = parseInt(e.target.value);
+            document.getElementById('maxGapValue').textContent = params.maxGap;
+            triggerProcess();
+        });
+
+        document.getElementById('continuitySlider').addEventListener('input', (e) => {
+            params.continuity = parseInt(e.target.value);
+            document.getElementById('continuityValue').textContent = params.continuity;
+            triggerProcess();
+        });
+
+        penCountSlider.addEventListener('input', (e) => {
+            params.penCount = parseInt(e.target.value);
+            document.getElementById('penCountValue').textContent = params.penCount;
+            updatePenConfigs();
+            triggerProcess();
+        });
+
+        exportBtn.addEventListener('click', exportSVG);
+        copyBtn.addEventListener('click', copySVG);
+
+        function handleFileSelect(files) {
+            const file = files[0];
+            if (!file || !file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imageData = {
+                    file: file,
+                    base64: e.target.result
+                };
+
+                const img = new Image();
+                img.onload = () => {
+                    originalInner.innerHTML = '';
+                    originalInner.appendChild(img);
+                    document.getElementById('imageStat').textContent = `${img.width}×${img.height}`;
+
+                    // Reset zoom and compute fit scale
+                    requestAnimationFrame(() => {
+                        const rect = originalCanvasDiv.getBoundingClientRect();
+                        const scaleX = rect.width / img.naturalWidth;
+                        const scaleY = rect.height / img.naturalHeight;
+                        fitScale = Math.min(scaleX, scaleY, 1) * 0.95;
+                        viewState = { scale: fitScale, panX: 0, panY: 0 };
+                        applyView();
+                    });
+
+                    triggerProcess();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updatePenConfigs() {
+            const targetCount = params.penCount;
+
+            while (params.penWidths.length < targetCount) {
+                params.penWidths.push(1.0);
+            }
+            while (params.penWidths.length > targetCount) {
+                params.penWidths.pop();
+            }
+
+            while (params.penColors.length < targetCount) {
+                const idx = params.penColors.length;
+                params.penColors.push(defaultPenColors[idx] || '#FF0080');
+            }
+            while (params.penColors.length > targetCount) {
+                params.penColors.pop();
+            }
+
+            penConfigContainer.innerHTML = '';
+            for (let i = 0; i < targetCount; i++) {
+                const config = document.createElement('div');
+                config.className = 'pen-config';
+
+                const header = document.createElement('div');
+                header.className = 'pen-config-header';
+
+                const colorDot = document.createElement('div');
+                colorDot.className = 'pen-color-dot';
+                colorDot.style.backgroundColor = params.penColors[i];
+
+                const label = document.createElement('span');
+                label.className = 'pen-config-label';
+                label.textContent = `Stylo ${i + 1}`;
+
+                const widthDisplay = document.createElement('span');
+                widthDisplay.className = 'pen-config-width';
+                widthDisplay.textContent = params.penWidths[i].toFixed(2) + 'mm';
+
+                header.appendChild(colorDot);
+                header.appendChild(label);
+                header.appendChild(widthDisplay);
+
+                const slider = document.createElement('input');
+                slider.type = 'range';
+                slider.min = '0.1';
+                slider.max = '3.0';
+                slider.step = '0.1';
+                slider.value = params.penWidths[i];
+
+                slider.addEventListener('input', (e) => {
+                    params.penWidths[i] = parseFloat(e.target.value);
+                    widthDisplay.textContent = params.penWidths[i].toFixed(2) + 'mm';
+                    triggerProcess();
+                });
+
+                config.appendChild(header);
+                config.appendChild(slider);
+                penConfigContainer.appendChild(config);
+            }
+        }
+
+        function triggerProcess(stage = 'full') {
+            if (!imageData) return;
+            pendingFromStage = stage;
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                processImage();
+            }, 300);
+        }
+
+        async function processImage() {
+            if (!imageData) return;
+
+            if (currentController) currentController.abort();
+            currentController = new AbortController();
+
+            startTime = Date.now();
+            processingToast.classList.add('active');
+            progressSection.classList.remove('progress-hidden');
+            progressBarFill.style.width = '0%';
+            progressPercent.textContent = '0%';
+            progressStage.textContent = 'Initialisation...';
+
+            try {
+                const formData = new FormData();
+                // Only send image file for full recalculation
+                if (pendingFromStage === 'full' || !imageHash) {
+                    formData.append('image', imageData.file);
+                }
+                formData.append('params', JSON.stringify(params));
+                formData.append('fromStage', pendingFromStage);
+                formData.append('imageHash', imageHash);
+
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    body: formData,
+                    signal: currentController.signal
+                });
+
+                if (!response.ok) {
+                    throw new Error('Server error: ' + response.status);
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.substring(6));
+                                handleStreamData(data);
+                            } catch (e) {
+                                console.error('Parse error:', e);
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    console.log('Request aborted');
+                } else {
+                    console.error('Process error:', error);
+                    progressStage.textContent = 'Erreur: ' + error.message;
+                }
+            } finally {
+                processingToast.classList.remove('active');
+            }
+        }
+
+        function handleStreamData(data) {
+            if (data.type === 'progress') {
+                const elapsed = Date.now() - startTime;
+                const percent = data.percent || 0;
+                const stage = data.stage || 'Traitement...';
+
+                progressBarFill.style.width = percent + '%';
+                progressPercent.textContent = percent.toFixed(0) + '%';
+                progressStage.textContent = stage;
+                processingPercent.textContent = percent.toFixed(0) + '%';
+                processingText.textContent = stage;
+
+                if (percent > 0) {
+                    const rate = elapsed / percent;
+                    const remaining = (100 - percent) * rate;
+                    progressTime.textContent = formatTime(remaining);
+                }
+            } else if (data.type === 'partial_svg') {
+                // Progressive preview: update SVG in real-time as paths are processed
+                vectorizedInner.innerHTML = data.svg;
+            } else if (data.type === 'result') {
+                currentSVG = data.svg;
+                vectorizedInner.innerHTML = currentSVG;
+                if (data.imageHash) imageHash = data.imageHash;
+                updateStats(data);
+                const computeTime = Date.now() - startTime;
+                document.getElementById('computeTimeStat').textContent = formatTime(computeTime);
+                progressSection.classList.add('progress-hidden');
+            }
+        }
+
+        function updateStats(data) {
+            if (data.stats) {
+                const s = data.stats;
+                document.getElementById('pathsStat').textContent = s.paths || 0;
+                document.getElementById('drawDistStat').textContent = formatDistance(s.draw_distance);
+                document.getElementById('travelDistStat').textContent = formatDistance(s.travel_distance);
+                document.getElementById('penUpsStat').textContent = s.pen_ups || 0;
+                if (s.estimated_time) {
+                    document.getElementById('estimatedTimeStat').textContent = formatTime(s.estimated_time);
+                }
+            }
+        }
+
+        function formatTime(ms) {
+            if (ms < 1000) return ms.toFixed(0) + 'ms';
+            const s = ms / 1000;
+            if (s < 60) return s.toFixed(1) + 's';
+            const m = s / 60;
+            return m.toFixed(1) + 'm';
+        }
+
+        function formatDistance(distance) {
+            if (!distance) return '--';
+            if (distance < 1000) return distance.toFixed(0) + 'mm';
+            const m = distance / 1000;
+            return m.toFixed(2) + 'm';
+        }
+
+        function exportSVG() {
+            if (!currentSVG) return;
+
+            const blob = new Blob([currentSVG], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'vectorized.svg';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function copySVG() {
+            if (!currentSVG) return;
+
+            navigator.clipboard.writeText(currentSVG).then(() => {
+                const original = copyBtn.textContent;
+                copyBtn.textContent = 'Copié!';
+                setTimeout(() => {
+                    copyBtn.textContent = original;
+                }, 2000);
+            });
+        }
+
+        // ── Synchronized Zoom & Pan ──
+        // Trackpad: two-finger scroll = pan, pinch = zoom
+        // Mouse: drag = pan, scroll wheel = zoom, double-click = reset
+
+        const MAX_ZOOM_PCT = 10000;  // cap at 10000%
+
+        function applyView() {
+            const { scale, panX, panY } = viewState;
+            const t = `translate(${panX}px, ${panY}px) scale(${scale})`;
+            originalInner.style.transform = t;
+            vectorizedInner.style.transform = t;
+            originalInner.style.transformOrigin = 'center center';
+            vectorizedInner.style.transformOrigin = 'center center';
+            const pct = Math.round(scale / fitScale * 100);
+            zoomInfo.textContent = Math.min(pct, MAX_ZOOM_PCT) + '%';
+            zoomInfo2.textContent = Math.min(pct, MAX_ZOOM_PCT) + '%';
+        }
+
+        function getMaxScale() {
+            return fitScale * MAX_ZOOM_PCT / 100;
+        }
+
+        function handleWheel(e) {
+            e.preventDefault();
+
+            // ctrlKey = pinch gesture on macOS trackpad → ZOOM
+            if (e.ctrlKey) {
+                // Pinch zoom: deltaY is the pinch delta (smaller values)
+                const zoomSensitivity = 0.01;
+                const factor = 1 - e.deltaY * zoomSensitivity;
+                const newScale = Math.max(0.02, Math.min(viewState.scale * factor, getMaxScale()));
+                const delta = newScale / viewState.scale;
+
+                const rect = e.currentTarget.getBoundingClientRect();
+                const cx = e.clientX - rect.left - rect.width / 2;
+                const cy = e.clientY - rect.top - rect.height / 2;
+
+                viewState.panX = cx - delta * (cx - viewState.panX);
+                viewState.panY = cy - delta * (cy - viewState.panY);
+                viewState.scale = newScale;
+            } else {
+                // Two-finger scroll → PAN
+                viewState.panX -= e.deltaX;
+                viewState.panY -= e.deltaY;
+            }
+            applyView();
+        }
+
+        function handleMouseDown(e) {
+            if (e.button !== 0) return;
+            isDragging = true;
+            dragStart = { x: e.clientX, y: e.clientY };
+            panStart = { x: viewState.panX, y: viewState.panY };
+        }
+
+        function handleMouseMove(e) {
+            if (!isDragging) return;
+            viewState.panX = panStart.x + (e.clientX - dragStart.x);
+            viewState.panY = panStart.y + (e.clientY - dragStart.y);
+            applyView();
+        }
+
+        function handleMouseUp() {
+            isDragging = false;
+        }
+
+        // Double-click to reset to fit
+        function handleDblClick() {
+            viewState = { scale: fitScale, panX: 0, panY: 0 };
+            applyView();
+        }
+
+        // Attach to both panes (synchronized)
+        [originalCanvasDiv, vectorizedCanvasDiv].forEach(pane => {
+            pane.addEventListener('wheel', handleWheel, { passive: false });
+            pane.addEventListener('mousedown', handleMouseDown);
+            pane.addEventListener('dblclick', handleDblClick);
+        });
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+
+        // ── Overlay / Side-by-Side mode ──
+        let viewMode = 'sideBySide'; // 'sideBySide' or 'overlay'
+        const canvasArea = document.getElementById('canvasArea');
+        const btnSideBySide = document.getElementById('btnSideBySide');
+        const btnOverlay = document.getElementById('btnOverlay');
+        const opacityControls = document.getElementById('opacityControls');
+        const opacityBitmapSlider = document.getElementById('opacityBitmap');
+        const opacityVectorSlider = document.getElementById('opacityVector');
+        const overlayVectorLayer = document.getElementById('overlayVectorLayer');
+
+        let overlayOpacity = { bitmap: 0.5, vector: 1.0 };
+
+        btnSideBySide.addEventListener('click', () => setViewMode('sideBySide'));
+        btnOverlay.addEventListener('click', () => setViewMode('overlay'));
+
+        function setViewMode(mode) {
+            viewMode = mode;
+            btnSideBySide.classList.toggle('active', mode === 'sideBySide');
+            btnOverlay.classList.toggle('active', mode === 'overlay');
+            canvasArea.classList.toggle('overlay-mode', mode === 'overlay');
+            opacityControls.classList.toggle('visible', mode === 'overlay');
+
+            if (mode === 'overlay') {
+                // Copy current SVG into overlay layer
+                syncOverlayContent();
+                overlayVectorLayer.style.display = '';
+                applyOverlayOpacity();
+            } else {
+                overlayVectorLayer.style.display = 'none';
+                // Restore full opacity on both panes
+                originalInner.style.opacity = '';
+                vectorizedInner.style.opacity = '';
+            }
+            applyView();
+        }
+
+        function syncOverlayContent() {
+            // Clone current SVG into the overlay layer
+            if (currentSVG) {
+                overlayVectorLayer.innerHTML = currentSVG;
+            } else {
+                overlayVectorLayer.innerHTML = '';
+            }
+        }
+
+        function applyOverlayOpacity() {
+            if (viewMode !== 'overlay') return;
+            originalInner.style.opacity = overlayOpacity.bitmap;
+            overlayVectorLayer.style.opacity = overlayOpacity.vector;
+        }
+
+        opacityBitmapSlider.addEventListener('input', (e) => {
+            overlayOpacity.bitmap = parseInt(e.target.value) / 100;
+            document.getElementById('opacityBitmapVal').textContent = e.target.value + '%';
+            applyOverlayOpacity();
+        });
+
+        opacityVectorSlider.addEventListener('input', (e) => {
+            overlayOpacity.vector = parseInt(e.target.value) / 100;
+            document.getElementById('opacityVectorVal').textContent = e.target.value + '%';
+            applyOverlayOpacity();
+        });
+
+        // Override applyView to also handle overlay layer transform
+        const _origApplyView = applyView;
+        applyView = function() {
+            const { scale, panX, panY } = viewState;
+            const t = `translate(${panX}px, ${panY}px) scale(${scale})`;
+            originalInner.style.transform = t;
+            originalInner.style.transformOrigin = 'center center';
+
+            if (viewMode === 'overlay') {
+                overlayVectorLayer.style.transform = t;
+                overlayVectorLayer.style.transformOrigin = 'center center';
+            }
+            vectorizedInner.style.transform = t;
+            vectorizedInner.style.transformOrigin = 'center center';
+
+            const pct = Math.round(scale / fitScale * 100);
+            zoomInfo.textContent = pct + '%';
+            zoomInfo2.textContent = pct + '%';
+        };
+
+        // Patch handleStreamData to sync overlay when result arrives
+        const _origHandleStreamData = handleStreamData;
+        handleStreamData = function(data) {
+            _origHandleStreamData(data);
+            if (viewMode === 'overlay' && (data.type === 'result' || data.type === 'partial_svg')) {
+                syncOverlayContent();
+                applyOverlayOpacity();
+                applyView();
+            }
+        };
+
+        updatePenConfigs();
+    </script>
+</body>
+</html>

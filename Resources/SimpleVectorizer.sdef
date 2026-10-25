@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<dictionary title="SimpleVectorizer Terminology">
+    <suite name="SimpleVectorizer Suite" code="SVec" description="Vectorization commands for SimpleVectorizer.">
+        <command name="vectorize" code="SVecVect" description="Vectorize an image file and export SVG.">
+            <direct-parameter type="text" description="Input image file path."/>
+            <parameter name="to" code="to  " type="text" optional="yes" description="Output SVG file path."/>
+            <result type="text" description="Generated SVG content or output path."/>
+        </command>
+    </suite>
+</dictionary>
